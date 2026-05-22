@@ -1,52 +1,210 @@
-const API="https://script.google.com/macros/s/AKfycbxYP0vhXEaRClSXHnmZ0UK-nBWK5GlwDf_vzEGQm5MrM41wnFPSb7Mevqop7eLRCYy40g/exec";
+const API="https://script.google.com/macros/s/AKfycbyEXjf4KY5kd_S5ploNUI7cjJbEcfn50HSkP8XxSWBlvlRQhEyyntCaBw4UpF7vosKLkA/exec";
 
-carregarAulas();
+let aulaAtual=null;
 
-async function carregarAulas(){
+carregar();
 
-const resposta=
+async function carregar(){
+
+const req=
 await fetch(
-`${API}?acao=aulas`
+`${API}?acao=agenda`
 );
 
-const aulas=
-await resposta.json();
+const dados=
+await req.json();
 
-const lista=
+const cards=
 document.getElementById(
-"listaAulas"
+"cards"
 );
 
-lista.innerHTML="";
+cards.innerHTML="";
 
-aulas.forEach(a=>{
+dados.forEach(a=>{
 
-const card=
-document.createElement("div");
+cards.innerHTML+=`
 
-card.className="card";
+<div
+class="card"
 
-card.innerHTML=`
+ondblclick="
+abrirModal(
+${a.id}
+)
+"
 
-<div class="numero">
-Aula ${a.id}
-</div>
+>
 
 <div class="titulo">
-${a.nome}
+
+${a.aula}
+
+</div>
+
+<div class="info">
+
+👨 ${a.professor}
+
+</div>
+
+<div class="info">
+
+📅 ${a.data}
+
+</div>
+
 </div>
 
 `;
 
-card.ondblclick=()=>{
-
-location.href=
-`detalhes.html?id=${a.id}`;
-
-};
-
-lista.appendChild(card);
-
 });
+
+}
+
+
+
+function abrirModal(id){
+
+aulaAtual=id;
+
+modal.style.display=
+"flex";
+
+}
+
+
+
+function abrirProfessor(){
+
+conteudo.innerHTML=`
+
+<input
+id="novoProfessor"
+
+placeholder=
+"Nome do professor"
+>
+
+<button
+onclick="salvarProfessor()">
+
+Salvar
+
+</button>
+
+`;
+
+}
+
+
+
+function abrirData(){
+
+conteudo.innerHTML=`
+
+<input
+type="date"
+
+id="novaData">
+
+<button
+onclick="salvarData()">
+
+Salvar
+
+</button>
+
+`;
+
+}
+
+
+
+async function salvarProfessor(){
+
+const professor=
+
+document.getElementById(
+"novoProfessor"
+).value;
+
+await fetch(
+API,
+{
+
+method:"POST",
+
+body:JSON.stringify({
+
+acao:
+"editarAgenda",
+
+id:
+aulaAtual,
+
+professor:
+professor
+
+})
+
+}
+
+);
+
+location.reload();
+
+}
+
+
+
+async function salvarData(){
+
+const data=
+
+document.getElementById(
+"novaData"
+).value;
+
+await fetch(
+API,
+{
+
+method:"POST",
+
+body:JSON.stringify({
+
+acao:
+"editarAgenda",
+
+id:
+aulaAtual,
+
+data:
+data
+
+})
+
+}
+
+);
+
+location.reload();
+
+}
+
+
+
+window.onclick=
+function(e){
+
+if(
+e.target==modal
+){
+
+modal.style.display=
+"none";
+
+}
 
 }
