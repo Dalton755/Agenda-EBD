@@ -1,6 +1,5 @@
 const API="https://script.google.com/macros/s/AKfycbyEXjf4KY5kd_S5ploNUI7cjJbEcfn50HSkP8XxSWBlvlRQhEyyntCaBw4UpF7vosKLkA/exec";
 
-
 let aulaAtual=null;
 
 carregar();
@@ -36,6 +35,27 @@ document.getElementById(
 cards.innerHTML="";
 
 if(dados.length===0){
+
+cards.innerHTML=`
+
+<div class="card">
+
+Nenhuma aula encontrada
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+// ==========================
+// MONTA OS CARDS
+// ==========================
+
+dados.forEach(a=>{
 
 cards.innerHTML+=`
 
@@ -86,9 +106,11 @@ console.error(
 erro
 );
 
-document.getElementById(
+document
+.getElementById(
 "cards"
-).innerHTML=`
+)
+.innerHTML=`
 
 <div class="card">
 
@@ -127,12 +149,10 @@ conteudo.innerHTML=`
 
 <input
 id="novoProfessor"
-placeholder=
-"Digite nome do professor">
+placeholder="Digite nome do professor">
 
 <button
-onclick=
-"salvarProfessor()">
+onclick="salvarProfessor()">
 
 Salvar
 
@@ -152,8 +172,7 @@ type="date"
 id="novaData">
 
 <button
-onclick=
-"salvarData()">
+onclick="salvarData()">
 
 Salvar
 
@@ -171,7 +190,8 @@ const professor=
 document
 .getElementById(
 "novoProfessor"
-).value;
+)
+.value;
 
 await fetch(
 API,
@@ -181,14 +201,11 @@ method:"POST",
 
 body:JSON.stringify({
 
-acao:
-"editarAgenda",
+acao:"editarAgenda",
 
-id:
-aulaAtual,
+id:aulaAtual,
 
-professor:
-professor
+professor:professor
 
 })
 
@@ -201,6 +218,7 @@ location.reload();
 }
 
 
+
 async function salvarData(){
 
 const data=
@@ -208,7 +226,8 @@ const data=
 document
 .getElementById(
 "novaData"
-).value;
+)
+.value;
 
 await fetch(
 API,
@@ -218,14 +237,11 @@ method:"POST",
 
 body:JSON.stringify({
 
-acao:
-"editarAgenda",
+acao:"editarAgenda",
 
-id:
-aulaAtual,
+id:aulaAtual,
 
-data:
-data
+data:data
 
 })
 
