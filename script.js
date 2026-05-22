@@ -50,7 +50,7 @@ const card=`
 
 <div
 class="card"
-ondblclick="abrirModal(${a.id})"
+onclick="abrirModal(${a.id})"
 >
 
 <div class="aulaNumero">
