@@ -1,4 +1,4 @@
-const API="SUA_URL_DO_APPS_SCRIPT";
+const API="https://script.google.com/macros/s/AKfycbxYP0vhXEaRClSXHnmZ0UK-nBWK5GlwDf_vzEGQm5MrM41wnFPSb7Mevqop7eLRCYy40g/exec";
 
 carregarAulas();
 
