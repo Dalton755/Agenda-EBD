@@ -1,4 +1,4 @@
-const API="https://script.google.com/macros/s/AKfycbyEXjf4KY5kd_S5ploNUI7cjJbEcfn50HSkP8XxSWBlvlRQhEyyntCaBw4UpF7vosKLkA/exec";
+const API="https://script.google.com/macros/s/AKfycbwz57iFC3Qbl9GfNAY0FWgi3x5G_dw1k2_mIf16c_KSNmxjrHtUCVgXjc2sx97Z0OqO1A/exec";
 
 let aulaAtual=null;
 
