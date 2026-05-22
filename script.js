@@ -1,40 +1,33 @@
 const API="https://script.google.com/macros/s/AKfycbwz57iFC3Qbl9GfNAY0FWgi3x5G_dw1k2_mIf16c_KSNmxjrHtUCVgXjc2sx97Z0OqO1A/exec";
 
-let aulaAtual=null;
 
-carregar();
+let aulaAtual = null;
+
+document.addEventListener(
+"DOMContentLoaded",
+carregar
+);
 
 async function carregar(){
 
 try{
 
-const req=await fetch(
+const req = await fetch(
 `${API}?acao=agenda`
 );
 
-if(!req.ok){
+const dados = await req.json();
 
-throw new Error(
-"Erro HTTP: "+req.status
-);
+console.log(dados);
 
-}
-
-const dados=
-await req.json();
-
-console.log(
-dados
-);
-
-const cards=
+const cards =
 document.getElementById(
 "cards"
 );
 
 cards.innerHTML="";
 
-if(dados.length===0){
+if(!dados || dados.length===0){
 
 cards.innerHTML=`
 
@@ -51,21 +44,13 @@ return;
 }
 
 
-// ==========================
-// MONTA OS CARDS
-// ==========================
-
 dados.forEach(a=>{
 
-cards.innerHTML+=`
+const card=`
 
 <div
 class="card"
-ondblclick="
-abrirModal(
-${a.id}
-)
-"
+ondblclick="abrirModal(${a.id})"
 >
 
 <div class="aulaNumero">
@@ -98,6 +83,8 @@ ${a.data}
 
 `;
 
+cards.innerHTML += card;
+
 });
 
 }catch(erro){
@@ -106,19 +93,17 @@ console.error(
 erro
 );
 
-document
-.getElementById(
+document.getElementById(
 "cards"
-)
-.innerHTML=`
+).innerHTML=`
 
 <div class="card">
 
-Erro:
+Erro ao carregar:
 
 <br><br>
 
-${erro}
+${erro.message}
 
 </div>
 
@@ -137,19 +122,22 @@ document
 .getElementById(
 "modal"
 )
-.style.display=
-"flex";
+.style.display="flex";
 
 }
 
 
 function abrirProfessor(){
 
-conteudo.innerHTML=`
+document
+.getElementById(
+"conteudo"
+)
+.innerHTML=`
 
 <input
 id="novoProfessor"
-placeholder="Digite nome do professor">
+placeholder="Digite o nome">
 
 <button
 onclick="salvarProfessor()">
@@ -165,7 +153,11 @@ Salvar
 
 function abrirData(){
 
-conteudo.innerHTML=`
+document
+.getElementById(
+"conteudo"
+)
+.innerHTML=`
 
 <input
 type="date"
@@ -202,9 +194,7 @@ method:"POST",
 body:JSON.stringify({
 
 acao:"editarAgenda",
-
 id:aulaAtual,
-
 professor:professor
 
 })
@@ -216,7 +206,6 @@ professor:professor
 location.reload();
 
 }
-
 
 
 async function salvarData(){
@@ -238,9 +227,7 @@ method:"POST",
 body:JSON.stringify({
 
 acao:"editarAgenda",
-
 id:aulaAtual,
-
 data:data
 
 })
@@ -250,5 +237,22 @@ data:data
 );
 
 location.reload();
+
+}
+
+
+window.onclick=(e)=>{
+
+const modal=
+document.getElementById(
+"modal"
+);
+
+if(e.target===modal){
+
+modal.style.display=
+"none";
+
+}
 
 }
