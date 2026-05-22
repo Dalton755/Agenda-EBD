@@ -37,22 +37,6 @@ cards.innerHTML="";
 
 if(dados.length===0){
 
-cards.innerHTML=`
-
-<div class="card">
-
-Nenhuma aula encontrada
-
-</div>
-
-`;
-
-return;
-
-}
-
-dados.forEach(a=>{
-
 cards.innerHTML+=`
 
 <div
@@ -63,6 +47,12 @@ ${a.id}
 )
 "
 >
+
+<div class="aulaNumero">
+
+Aula ${a.id}
+
+</div>
 
 <div class="titulo">
 
