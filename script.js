@@ -1,18 +1,32 @@
 const API="https://script.google.com/macros/s/AKfycbyEXjf4KY5kd_S5ploNUI7cjJbEcfn50HSkP8XxSWBlvlRQhEyyntCaBw4UpF7vosKLkA/exec";
 
+
 let aulaAtual=null;
 
 carregar();
 
 async function carregar(){
 
-const req=
-await fetch(
+try{
+
+const req=await fetch(
 `${API}?acao=agenda`
 );
 
+if(!req.ok){
+
+throw new Error(
+"Erro HTTP: "+req.status
+);
+
+}
+
 const dados=
 await req.json();
+
+console.log(
+dados
+);
 
 const cards=
 document.getElementById(
@@ -21,36 +35,52 @@ document.getElementById(
 
 cards.innerHTML="";
 
+if(dados.length===0){
+
+cards.innerHTML=`
+
+<div class="card">
+
+Nenhuma aula encontrada
+
+</div>
+
+`;
+
+return;
+
+}
+
 dados.forEach(a=>{
 
 cards.innerHTML+=`
 
 <div
 class="card"
-
 ondblclick="
 abrirModal(
 ${a.id}
 )
 "
-
 >
 
 <div class="titulo">
 
-${a.aula}
+📖 ${a.aula}
 
 </div>
 
 <div class="info">
 
-👨 ${a.professor}
+👨 Professor:
+${a.professor}
 
 </div>
 
 <div class="info">
 
-📅 ${a.data}
+📅 Data:
+${a.data}
 
 </div>
 
@@ -60,19 +90,45 @@ ${a.aula}
 
 });
 
+}catch(erro){
+
+console.error(
+erro
+);
+
+document.getElementById(
+"cards"
+).innerHTML=`
+
+<div class="card">
+
+Erro:
+
+<br><br>
+
+${erro}
+
+</div>
+
+`;
+
 }
 
+}
 
 
 function abrirModal(id){
 
 aulaAtual=id;
 
-modal.style.display=
+document
+.getElementById(
+"modal"
+)
+.style.display=
 "flex";
 
 }
-
 
 
 function abrirProfessor(){
@@ -81,13 +137,12 @@ conteudo.innerHTML=`
 
 <input
 id="novoProfessor"
-
 placeholder=
-"Nome do professor"
->
+"Digite nome do professor">
 
 <button
-onclick="salvarProfessor()">
+onclick=
+"salvarProfessor()">
 
 Salvar
 
@@ -96,7 +151,6 @@ Salvar
 `;
 
 }
-
 
 
 function abrirData(){
@@ -105,11 +159,11 @@ conteudo.innerHTML=`
 
 <input
 type="date"
-
 id="novaData">
 
 <button
-onclick="salvarData()">
+onclick=
+"salvarData()">
 
 Salvar
 
@@ -120,12 +174,12 @@ Salvar
 }
 
 
-
 async function salvarProfessor(){
 
 const professor=
 
-document.getElementById(
+document
+.getElementById(
 "novoProfessor"
 ).value;
 
@@ -157,12 +211,12 @@ location.reload();
 }
 
 
-
 async function salvarData(){
 
 const data=
 
-document.getElementById(
+document
+.getElementById(
 "novaData"
 ).value;
 
@@ -190,21 +244,5 @@ data
 );
 
 location.reload();
-
-}
-
-
-
-window.onclick=
-function(e){
-
-if(
-e.target==modal
-){
-
-modal.style.display=
-"none";
-
-}
 
 }
