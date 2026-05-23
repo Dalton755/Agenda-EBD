@@ -1,56 +1,39 @@
 const API="https://script.google.com/macros/s/AKfycbwz57iFC3Qbl9GfNAY0FWgi3x5G_dw1k2_mIf16c_KSNmxjrHtUCVgXjc2sx97Z0OqO1A/exec";
 
-
-let aulaAtual = null;
-
 document.addEventListener(
 "DOMContentLoaded",
 carregar
 );
 
+let aulaAtual=null;
+let dadosAulas=[];
+
 async function carregar(){
 
-try{
-
-const req = await fetch(
+const req=
+await fetch(
 `${API}?acao=agenda`
 );
 
-const dados = await req.json();
+dadosAulas=
+await req.json();
 
-console.log(dados);
-
-const cards =
+const cards=
 document.getElementById(
 "cards"
 );
 
 cards.innerHTML="";
 
-if(!dados || dados.length===0){
+dadosAulas.forEach(a=>{
 
-cards.innerHTML=`
-
-<div class="card">
-
-Nenhuma aula encontrada
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-dados.forEach(a=>{
-
-const card=`
+cards.innerHTML+=`
 
 <div
 class="card"
-onclick="abrirModal(${a.id})"
+onclick="
+abrirDetalhes(${a.id})
+"
 >
 
 <div class="aulaNumero">
@@ -61,49 +44,101 @@ Aula ${a.id}
 
 <div class="titulo">
 
-📖 ${a.aula}
+${a.aula}
 
 </div>
 
 <div class="info">
 
-👨 Professor:
-${a.professor}
+👨 ${a.professor}
 
 </div>
 
 <div class="info">
 
-📅 Data:
-${a.data}
+📅 ${a.data}
 
 </div>
 
 </div>
 
 `;
-
-cards.innerHTML += card;
 
 });
 
-}catch(erro){
+}
 
-console.error(
-erro
+
+
+function abrirDetalhes(id){
+
+aulaAtual=id;
+
+const aula=
+
+dadosAulas.find(
+
+a=>a.id==id
+
 );
 
-document.getElementById(
-"cards"
-).innerHTML=`
+modal.style.display=
+"flex";
 
-<div class="card">
+conteudo.innerHTML=`
 
-Erro ao carregar:
+<div class="detalhes">
 
-<br><br>
+<h2>
 
-${erro.message}
+Aula ${aula.id}
+
+</h2>
+
+<h3>
+
+${aula.aula}
+
+</h3>
+
+<p>
+
+👨 ${aula.professor}
+
+</p>
+
+<p>
+
+📅 ${aula.data}
+
+</p>
+
+<p>
+
+🔗 Link da aula
+
+</p>
+
+<input
+readonly
+value="${aula.link}"
+id="linkAula">
+
+<button
+onclick=
+"copiarLink()">
+
+Copiar Link
+
+</button>
+
+<button
+onclick=
+"mostrarEdicao()">
+
+Editar
+
+</button>
 
 </div>
 
@@ -111,36 +146,76 @@ ${erro.message}
 
 }
 
+
+
+function copiarLink(){
+
+const link=
+
+document.getElementById(
+"linkAula"
+);
+
+link.select();
+
+document.execCommand(
+"copy"
+);
+
+alert(
+"Link copiado"
+);
+
 }
 
 
-function abrirModal(id){
 
-aulaAtual=id;
+function mostrarEdicao(){
 
-document
-.getElementById(
-"modal"
-)
-.style.display="flex";
+conteudo.innerHTML+=`
+
+<hr>
+
+<h3>
+
+O que deseja fazer?
+
+</h3>
+
+<button
+onclick=
+"abrirProfessor()">
+
+Agendar Professor
+
+</button>
+
+<button
+onclick=
+"abrirData()">
+
+Mudar Data
+
+</button>
+
+`;
 
 }
+
 
 
 function abrirProfessor(){
 
-document
-.getElementById(
-"conteudo"
-)
-.innerHTML=`
+conteudo.innerHTML+=`
 
 <input
 id="novoProfessor"
-placeholder="Digite o nome">
+placeholder=
+"Novo professor">
 
 <button
-onclick="salvarProfessor()">
+onclick=
+"salvarProfessor()">
 
 Salvar
 
@@ -151,20 +226,18 @@ Salvar
 }
 
 
+
 function abrirData(){
 
-document
-.getElementById(
-"conteudo"
-)
-.innerHTML=`
+conteudo.innerHTML+=`
 
 <input
 type="date"
 id="novaData">
 
 <button
-onclick="salvarData()">
+onclick=
+"salvarData()">
 
 Salvar
 
@@ -175,15 +248,12 @@ Salvar
 }
 
 
+
 async function salvarProfessor(){
 
 const professor=
 
-document
-.getElementById(
-"novoProfessor"
-)
-.value;
+novoProfessor.value;
 
 await fetch(
 API,
@@ -193,9 +263,14 @@ method:"POST",
 
 body:JSON.stringify({
 
-acao:"editarAgenda",
-id:aulaAtual,
-professor:professor
+acao:
+"editarAgenda",
+
+id:
+aulaAtual,
+
+professor:
+professor
 
 })
 
@@ -206,17 +281,13 @@ professor:professor
 location.reload();
 
 }
+
 
 
 async function salvarData(){
 
 const data=
-
-document
-.getElementById(
-"novaData"
-)
-.value;
+novaData.value;
 
 await fetch(
 API,
@@ -226,9 +297,14 @@ method:"POST",
 
 body:JSON.stringify({
 
-acao:"editarAgenda",
-id:aulaAtual,
-data:data
+acao:
+"editarAgenda",
+
+id:
+aulaAtual,
+
+data:
+data
 
 })
 
@@ -237,22 +313,5 @@ data:data
 );
 
 location.reload();
-
-}
-
-
-window.onclick=(e)=>{
-
-const modal=
-document.getElementById(
-"modal"
-);
-
-if(e.target===modal){
-
-modal.style.display=
-"none";
-
-}
 
 }
