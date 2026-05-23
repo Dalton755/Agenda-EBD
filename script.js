@@ -1,40 +1,68 @@
 const API="https://script.google.com/macros/s/AKfycbzPNMhstLtlECiqSXOYVy71kZixpR3FSAcOcm4ve913aOEZi_MTUcyge03YHOwADcw_JQ/exec";
 
+
+let aulaAtual=null;
+let dadosAulas=[];
+
 document.addEventListener(
 "DOMContentLoaded",
 carregar
 );
 
-let aulaAtual=null;
-let dadosAulas=[];
-
 async function carregar(){
 
-const req=
-await fetch(
-`${API}?acao=agenda`
-);
-
-dadosAulas=
-await req.json();
+try{
 
 const cards=
 document.getElementById(
 "cards"
 );
 
+cards.innerHTML=`
+
+<div class="card">
+
+Carregando...
+
+</div>
+
+`;
+
+const resposta=
+
+await fetch(
+`${API}?acao=agenda`
+);
+
+if(!resposta.ok){
+
+throw new Error(
+"Falha na API"
+);
+
+}
+
+dadosAulas=
+await resposta.json();
+
 cards.innerHTML="";
 
 dadosAulas.forEach(a=>{
 
-cards.innerHTML+=`
+const card=
+document.createElement(
+"div"
+);
 
-<div
-class="card"
-onclick="
-abrirDetalhes(${a.id})
-"
->
+card.className=
+"card";
+
+card.onclick=
+()=>abrirDetalhes(
+a.id
+);
+
+card.innerHTML=`
 
 <div class="aulaNumero">
 
@@ -44,7 +72,7 @@ Aula ${a.id}
 
 <div class="titulo">
 
-${a.aula}
+📖 ${a.aula}
 
 </div>
 
@@ -60,11 +88,39 @@ ${a.aula}
 
 </div>
 
+`;
+
+cards.appendChild(
+card
+);
+
+});
+
+}catch(erro){
+
+console.log(
+erro
+);
+
+document
+.getElementById(
+"cards"
+)
+.innerHTML=`
+
+<div class="card">
+
+Erro ao carregar
+
+<br><br>
+
+${erro.message}
+
 </div>
 
 `;
 
-});
+}
 
 }
 
@@ -77,15 +133,21 @@ aulaAtual=id;
 const aula=
 
 dadosAulas.find(
-
 a=>a.id==id
-
 );
 
-modal.style.display=
+document
+.getElementById(
+"modal"
+)
+.style.display=
 "flex";
 
-conteudo.innerHTML=`
+document
+.getElementById(
+"conteudo"
+)
+.innerHTML=`
 
 <div class="detalhes">
 
@@ -121,20 +183,18 @@ ${aula.aula}
 
 <input
 readonly
-value="${aula.link}"
-id="linkAula">
+id="linkAula"
+value="${aula.link||''}">
 
 <button
-onclick=
-"copiarLink()">
+onclick="copiarLink()">
 
 Copiar Link
 
 </button>
 
 <button
-onclick=
-"mostrarEdicao()">
+onclick="mostrarEdicao()">
 
 Editar
 
@@ -151,15 +211,12 @@ Editar
 function copiarLink(){
 
 const link=
-
 document.getElementById(
 "linkAula"
 );
 
-link.select();
-
-document.execCommand(
-"copy"
+navigator.clipboard.writeText(
+link.value
 );
 
 alert(
@@ -172,7 +229,11 @@ alert(
 
 function mostrarEdicao(){
 
-conteudo.innerHTML+=`
+document
+.getElementById(
+"conteudo"
+)
+.innerHTML+=`
 
 <hr>
 
@@ -206,7 +267,11 @@ Mudar Data
 
 function abrirProfessor(){
 
-conteudo.innerHTML+=`
+document
+.getElementById(
+"conteudo"
+)
+.innerHTML+=`
 
 <input
 id="novoProfessor"
@@ -229,7 +294,11 @@ Salvar
 
 function abrirData(){
 
-conteudo.innerHTML+=`
+document
+.getElementById(
+"conteudo"
+)
+.innerHTML+=`
 
 <input
 type="date"
@@ -253,11 +322,14 @@ async function salvarProfessor(){
 
 const professor=
 
-novoProfessor.value;
+document
+.getElementById(
+"novoProfessor"
+)
+.value;
 
 await fetch(
-API,
-{
+API,{
 
 method:"POST",
 
@@ -274,9 +346,7 @@ professor
 
 })
 
-}
-
-);
+});
 
 location.reload();
 
@@ -287,11 +357,15 @@ location.reload();
 async function salvarData(){
 
 const data=
-novaData.value;
+
+document
+.getElementById(
+"novaData"
+)
+.value;
 
 await fetch(
-API,
-{
+API,{
 
 method:"POST",
 
@@ -308,10 +382,31 @@ data
 
 })
 
-}
-
-);
+});
 
 location.reload();
+
+}
+
+
+
+window.onclick=
+function(e){
+
+const modal=
+
+document
+.getElementById(
+"modal"
+);
+
+if(
+e.target===modal
+){
+
+modal.style.display=
+"none";
+
+}
 
 }
