@@ -1,4 +1,4 @@
-const API="https://script.google.com/macros/s/AKfycbwz57iFC3Qbl9GfNAY0FWgi3x5G_dw1k2_mIf16c_KSNmxjrHtUCVgXjc2sx97Z0OqO1A/exec";
+const API="https://script.google.com/macros/s/AKfycbzPNMhstLtlECiqSXOYVy71kZixpR3FSAcOcm4ve913aOEZi_MTUcyge03YHOwADcw_JQ/exec";
 
 document.addEventListener(
 "DOMContentLoaded",
