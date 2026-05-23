@@ -1,7 +1,7 @@
 const API="https://script.google.com/macros/s/AKfycbzPNMhstLtlECiqSXOYVy71kZixpR3FSAcOcm4ve913aOEZi_MTUcyge03YHOwADcw_JQ/exec";
 
 
-let aulaAtual=null;
+let aulaAtual=null; 
 let dadosAulas=[];
 
 document.addEventListener(
